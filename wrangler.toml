@@ -5,8 +5,8 @@ compatibility_date = "2024-10-05"
 # D1数据库配置
 [[d1_databases]]
 binding = "DB"           # 在代码中通过 env.DB 访问
-database_name = "cf-db"  # 数据库名称
-database_id = ""         # 部署后由Cloudflare分配，初始留空
+database_name = "d1db"  # 数据库名称
+database_id = "2c5d013e-e978-4b05-bf5b-6b819b941ba6"         # 部署后由Cloudflare分配，初始留空
 
 # 开发环境配置
 [dev]
