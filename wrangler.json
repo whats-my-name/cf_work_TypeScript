@@ -1,15 +1,16 @@
 {
-  "name": "cf-test-project",  
-  "compatibility_date": "2025-10-06",  
-  "main": "worker.js",  
-  "assets": {
-    "directory": "."
-  },
-  "d1_databases": [
-    {
-      "binding": "DB",  
-      "database_name": "d1db",  
-      "database_id": "49ebe697-5233-417e-9a19-bfd32025e192"  
+        "name": "cf-test-project",
+        "compatibility_date": "2025-10-06",
+        "main": "worker.js",
+        "assets": {
+            "directory": "."
+        },
+        "d1_databases": [
+            {
+                "binding": "DB",
+                "database_name": "d1db",
+                "database_id": "49ebe697-5233-417e-9a19-bfd32025e192"
+            }
+        ]
     }
-  ]
-}
+
