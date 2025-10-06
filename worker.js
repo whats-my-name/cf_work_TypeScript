@@ -325,50 +325,52 @@ async function handleApiRequest(request, env) {
         }
         
         // 删除留言
-        if (path.match(/^\/api\/messages\/(\d+)$/) && method === 'DELETE') {
-            if (!user) {
-                return new Response(JSON.stringify({ error: '请先登录' }), {
-                    status: 401,
-                    headers: { 'Content-Type': 'application/json' }
-                });
-            }
-            
-            const messageId = path.match(/^\/api\/messages\/(\d+)$/)[1];
-            
-            try {
-                // 检查留言是否存在以及权限
-                const message = await env.DB.prepare(
-                    'SELECT user_id FROM messages WHERE id = ?'
-                ).bind(messageId).first();
-                
-                if (!message) {
-                    return new Response(JSON.stringify({ error: '留言不存在' }), {
-                        status: 404,
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                }
-                
-                // 只有管理员或留言作者可以删除
-                if (user.role !== 'admin' && message.user_id !== user.id) {
-                    return new Response(JSON.stringify({ error: '没有权限删除此留言' }), {
-                        status: 403,
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                }
-                
-                await env.DB.prepare('DELETE FROM messages WHERE id = ?').bind(messageId).run();
-                
-                return new Response(JSON.stringify({ success: true }), {
-                    headers: { 'Content-Type': 'application/json' }
-                });
-            } catch (error) {
-                console.error('删除留言失败:', error);
-                return new Response(JSON.stringify({ error: '删除留言失败' }), {
-                    status: 500,
-                    headers: { 'Content-Type': 'application/json' }
-                });
-            }
+if (path.match(/^\/api\/messages\/(\d+)$/) && method === 'DELETE') {
+    if (!user) {
+        return new Response(JSON.stringify({ error: '请先登录' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+    
+    const messageId = path.match(/^\/api\/messages\/(\d+)$/)[1];
+    
+    try {
+        // 检查留言是否存在
+        const message = await env.DB.prepare(
+            'SELECT user_id FROM messages WHERE id = ?'
+        ).bind(messageId).first();
+        
+        if (!message) {
+            return new Response(JSON.stringify({ error: '留言不存在' }), {
+                status: 404,
+                headers: { 'Content-Type': 'application/json' }
+            });
         }
+        
+        // 核心修改：管理员可以删除任何留言，普通用户只能删除自己的
+        if (user.role !== 'admin' && message.user_id !== user.id) {
+            return new Response(JSON.stringify({ error: '没有权限删除此留言' }), {
+                status: 403,
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+        
+        // 执行删除
+        await env.DB.prepare('DELETE FROM messages WHERE id = ?').bind(messageId).run();
+        
+        return new Response(JSON.stringify({ success: true }), {
+            headers: { 'Content-Type': 'application/json' }
+        });
+    } catch (error) {
+        console.error('删除留言失败:', error);
+        return new Response(JSON.stringify({ error: '删除留言失败' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+}
+
     }
 
     // 管理员用户管理API
