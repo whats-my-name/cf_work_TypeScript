@@ -3,11 +3,7 @@
   "compatibility_date": "2025-10-06",  
   "main": "worker.js",  
   "assets": {
-    "include": [
-      "index.html",
-      "styles.css",
-      "script.js"
-    ]
+    "directory": "."
   },
   "d1_databases": [
     {
