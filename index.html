@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户留言系统</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>用户留言系统</h1>
+            <div id="user-info" class="user-info">
+                <button id="login-btn" class="btn"><i class="fas fa-sign-in-alt"></i> 登录</button>
+                <button id="register-btn" class="btn"><i class="fas fa-user-plus"></i> 注册</button>
+            </div>
+        </header>
+
+        <main>
+            <!-- 登录模态框 -->
+            <div id="login-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close-btn">&times;</span>
+                    <h2>用户登录</h2>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="login-username">用户名</label>
+                            <input type="text" id="login-username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">密码</label>
+                            <input type="password" id="login-password" required>
+                        </div>
+                        <button type="submit" class="btn submit-btn">登录</button>
+                    </form>
+                    <div class="error-message" id="login-error"></div>
+                </div>
+            </div>
+
+            <!-- 注册模态框 -->
+            <div id="register-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close-btn">&times;</span>
+                    <h2>用户注册</h2>
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="reg-username">用户名</label>
+                            <input type="text" id="reg-username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-email">邮箱</label>
+                            <input type="email" id="reg-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-password">密码</label>
+                            <input type="password" id="reg-password" required>
+                        </div>
+                        <button type="submit" class="btn submit-btn">注册</button>
+                    </form>
+                    <div class="error-message" id="register-error"></div>
+                </div>
+            </div>
+
+            <!-- 留言区域 -->
+            <section id="message-section" class="message-section">
+                <div id="message-form-container" class="message-form-container hidden">
+                    <h2>发表留言</h2>
+                    <form id="message-form">
+                        <div class="form-group">
+                            <textarea id="message-content" rows="4" placeholder="请输入留言内容..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn submit-btn">提交留言</button>
+                    </form>
+                </div>
+
+                <!-- 管理员操作区域 -->
+                <div id="admin-controls" class="admin-controls hidden">
+                    <h3>管理员操作</h3>
+                    <button id="manage-users-btn" class="btn secondary-btn">管理用户</button>
+                </div>
+
+                <!-- 用户管理模态框 -->
+                <div id="user-management-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn">&times;</span>
+                        <h2>用户管理</h2>
+                        <div id="users-list"></div>
+                    </div>
+                </div>
+
+                <!-- 留言列表 -->
+                <div class="messages-list">
+                    <h2>留言列表</h2>
+                    <div id="messages-container"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2023 用户留言系统</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+    
