@@ -1,10 +1,11 @@
 {
         "name": "cf-test-project",
         "compatibility_date": "2025-10-06",
-        "main": "worker.js",
+        "main": "worker.js",       
         "assets": {
-            "directory": "."
-        },
+    "directory": "./public"
+  
+},
         "d1_databases": [
             {
                 "binding": "DB",
