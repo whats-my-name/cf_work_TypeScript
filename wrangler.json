@@ -3,7 +3,7 @@
     "compatibility_date": "2025-10-06",
     "main": "worker.js",
     "assets": {
-        "directory": "./vue/dist"
+        "directory": "./public"
     },
     "d1_databases": [
         {

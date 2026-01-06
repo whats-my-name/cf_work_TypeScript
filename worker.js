@@ -3,93 +3,37 @@
  */
 async function handleStaticAssets(request, env) {
     const url = new URL(request.url);
-    let path = url.pathname;
+    const path = url.pathname;
 
-    // 根路径返回选择页面
+    // 处理根路径请求，返回index.html
     if (path === '/' || path === '') {
-        return new Response(await env.ASSETS.get('selector.html'), {
+        return new Response(await env.ASSETS.get('index.html'), {
             headers: { 'Content-Type': 'text/html;charset=UTF-8' }
         });
     }
 
-    // Vue 版本路径 /vue/*
-    if (path.startsWith('/vue/')) {
-        path = path.slice(5); // 移除 /vue/
-
-        // 处理 Vue 应用的根路径
-        if (path === '' || path === '/') {
-            return new Response(await env.ASSETS.get('vue/index.html'), {
-                headers: { 'Content-Type': 'text/html;charset=UTF-8' }
-            });
-        }
-
-        // 从 vue/dist 获取资源
-        const asset = await env.ASSETS.get(`vue/dist${path}`);
+    // 处理CSS文件请求
+    if (path.endsWith('.css')) {
+        const asset = await env.ASSETS.get(path.slice(1)); // 移除前导斜杠
         if (asset) {
-            const contentType = getContentType(path);
             return new Response(asset, {
-                headers: { 'Content-Type': contentType }
+                headers: { 'Content-Type': 'text/css;charset=UTF-8' }
             });
         }
-
-        return new Response('Not found', { status: 404 });
     }
 
-    // 普通版本路径 /public/*
-    if (path.startsWith('/public/')) {
-        path = path.slice(8); // 移除 /public/
-
-        if (path === '' || path === '/') {
-            return new Response(await env.ASSETS.get('public/index.html'), {
-                headers: { 'Content-Type': 'text/html;charset=UTF-8' }
-            });
-        }
-
-        const asset = await env.ASSETS.get(`public${path}`);
+    // 处理JavaScript文件请求
+    if (path.endsWith('.js')) {
+        const asset = await env.ASSETS.get(path.slice(1)); // 移除前导斜杠
         if (asset) {
-            const contentType = getContentType(path);
             return new Response(asset, {
-                headers: { 'Content-Type': contentType }
+                headers: { 'Content-Type': 'application/javascript;charset=UTF-8' }
             });
         }
-
-        return new Response('Not found', { status: 404 });
-    }
-
-    // 兼容旧版：直接访问 /index.html 返回普通版本
-    if (path === '/index.html') {
-        return new Response(await env.ASSETS.get('public/index.html'), {
-            headers: { 'Content-Type': 'text/html;charset=UTF-8' }
-        });
     }
 
     // 资源未找到
     return new Response('Not found', { status: 404 });
-}
-
-/**
- * 根据文件扩展名获取 Content-Type
- */
-function getContentType(path) {
-    const ext = path.split('.').pop().toLowerCase();
-    const contentTypes = {
-        'html': 'text/html;charset=UTF-8',
-        'css': 'text/css;charset=UTF-8',
-        'js': 'application/javascript;charset=UTF-8',
-        'json': 'application/json;charset=UTF-8',
-        'png': 'image/png',
-        'jpg': 'image/jpeg',
-        'jpeg': 'image/jpeg',
-        'gif': 'image/gif',
-        'svg': 'image/svg+xml',
-        'ico': 'image/x-icon',
-        'woff': 'font/woff',
-        'woff2': 'font/woff2',
-        'ttf': 'font/ttf',
-        'eot': 'application/vnd.ms-fontobject'
-    };
-
-    return contentTypes[ext] || 'application/octet-stream';
 }
 
 /**
