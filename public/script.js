@@ -109,6 +109,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // 图片上传按钮
+    const imageUploadBtn = document.getElementById('image-upload-btn');
+    const messageImageInput = document.getElementById('message-image');
+    const imagePreview = document.getElementById('image-preview');
+    const imagePreviewText = document.getElementById('image-preview-text');
+    let selectedImageData = null;
+
+    imageUploadBtn.addEventListener('click', () => {
+        messageImageInput.click();
+    });
+
+    messageImageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // 检查文件类型
+            if (!file.type.startsWith('image/')) {
+                showMessage('请选择图片文件', 'error');
+                return;
+            }
+
+            // 检查文件大小（限制为5MB）
+            if (file.size > 5 * 1024 * 1024) {
+                showMessage('图片大小不能超过5MB', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                selectedImageData = event.target.result;
+                imagePreview.innerHTML = `<img src="${selectedImageData}" alt="预览" style="max-width: 100%; max-height: 300px; border-radius: 8px;">`;
+                imagePreviewText.textContent = file.name;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
     // 留言表单提交
     messageForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -118,12 +154,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/api/messages', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content }),
+                body: JSON.stringify({ content, image: selectedImageData }),
                 credentials: 'include'
             });
 
             if (response.ok) {
                 messageForm.reset();
+                imagePreview.innerHTML = '';
+                imagePreviewText.textContent = '';
+                selectedImageData = null;
                 showMessage('留言成功！');
                 loadMessages();
             } else {
@@ -222,6 +261,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 更新已登录用户的UI
     function updateUIForLoggedInUser(user) {
+        // 保存用户信息到 localStorage
+        localStorage.setItem('currentUser', JSON.stringify(user));
+
         userInfo.innerHTML = `
             <div class="logged-in-user">
                 <span>欢迎, ${user.username}</span>
@@ -259,6 +301,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 更新未登录用户的UI
     function updateUIForLoggedOutUser() {
+        // 清除 localStorage 中的用户信息
+        localStorage.removeItem('currentUser');
+
         userInfo.innerHTML = `
             <button id="login-btn" class="btn"><i class="fas fa-sign-in-alt"></i> 登录</button>
             <button id="register-btn" class="btn"><i class="fas fa-user-plus"></i> 注册</button>
@@ -327,12 +372,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }
 
+            let imageHtml = '';
+            if (message.image_url) {
+                imageHtml = `<div class="message-image"><img src="${message.image_url}" alt="留言图片" loading="lazy"></div>`;
+            }
+
             messageCard.innerHTML = `
                 <div class="message-header">
                     <span><strong>${message.username}</strong></span>
                     <span>${formattedDate}</span>
                 </div>
                 <div class="message-content">${message.content}</div>
+                ${imageHtml}
                 ${actionsHtml}
             `;
 

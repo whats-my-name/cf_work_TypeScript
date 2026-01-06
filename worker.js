@@ -294,24 +294,37 @@ async function handleApiRequest(request, env) {
                     headers: { 'Content-Type': 'application/json' }
                 });
             }
-            
-            const { content } = await request.json();
-            
+
+            const { content, image } = await request.json();
+
             if (!content || content.trim() === '') {
                 return new Response(JSON.stringify({ error: '留言内容不能为空' }), {
                     status: 400,
                     headers: { 'Content-Type': 'application/json' }
                 });
             }
-            
+
             try {
+                // 如果有图片数据，转换为base64存储
+                let imageUrl = null;
+                if (image) {
+                    // 检查图片大小（base64字符串大小限制）
+                    if (image.length > 10 * 1024 * 1024) {
+                        return new Response(JSON.stringify({ error: '图片太大，请选择小于5MB的图片' }), {
+                            status: 400,
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                    }
+                    imageUrl = image;
+                }
+
                 // 管理员的留言自动批准，普通用户可能需要审核
-                const isApproved = user.role === 'admin' ? 1 : 1; // 这里简化为全部自动批准
-                
+                const isApproved = user.role === 'admin' ? 1 : 1;
+
                 await env.DB.prepare(
-                    'INSERT INTO messages (user_id, content, is_approved) VALUES (?, ?, ?)'
-                ).bind(user.id, content, isApproved).run();
-                
+                    'INSERT INTO messages (user_id, content, image_url, is_approved) VALUES (?, ?, ?, ?)'
+                ).bind(user.id, content, imageUrl, isApproved).run();
+
                 return new Response(JSON.stringify({ success: true }), {
                     headers: { 'Content-Type': 'application/json' }
                 });

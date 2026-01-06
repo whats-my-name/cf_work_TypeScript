@@ -70,6 +70,16 @@
                         <div class="form-group">
                             <textarea id="message-content" rows="4" placeholder="请输入留言内容..." required></textarea>
                         </div>
+                        <div class="form-group">
+                            <div class="image-upload-container">
+                                <input type="file" id="message-image" accept="image/*" style="display: none;">
+                                <button type="button" id="image-upload-btn" class="btn secondary-btn">
+                                    <i class="fas fa-image"></i> 添加图片
+                                </button>
+                                <span id="image-preview-text" style="margin-left: 10px; color: #666;"></span>
+                            </div>
+                            <div id="image-preview" class="image-preview"></div>
+                        </div>
                         <button type="submit" class="btn submit-btn">提交留言</button>
                     </form>
                 </div>
